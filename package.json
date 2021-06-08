@@ -1,0 +1,24 @@
+{
+  "name": "express.js_mynotetaker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GaliciaRogelio/express.js_myNoteTaker.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GaliciaRogelio/express.js_myNoteTaker/issues"
+  },
+  "homepage": "https://github.com/GaliciaRogelio/express.js_myNoteTaker#readme"
+}
