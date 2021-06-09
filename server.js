@@ -16,51 +16,56 @@ app.use(express.json());
 
 //route to notes.html
 app.get("/notes", (req, res) => {
-    res.sendFile(path.join(__dirname, "/public/notes.html"));
+    res.sendFile(path.join(__dirname, "./public/notes.html"));
+});
+
+app.get('/api/notes', (req, res) => {
+    res.sendFile(path.join(__dirname, "/db/db.json"));
 });
 
 // route to index.html
 app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "/public/index.html"));
+    res.sendFile(path.join(__dirname, "./public/index.html"));
 });
 
-//route to read the `db.json` file and return all saved notes as JSON.
-app.get("/api/notes", (req, res) => {
-    res.sendFile(path.join(__dirname, "/db/db.json"));
-});
-
-//receive a new note to save on the request body, add it to the `db.json` file, 
-//and then return the new note to the client.
+// gets a new note and posts it into the database
 app.post("/api/notes", (req, res) => {
     let addNote = req.body;
-    let noteList = JSON.parse(fs.readFileSync("./db/db.json", "utf-8"));
-    let notelength = (noteList.length).toString();
-
-    //create new property called id based on length and assign it to each json object
+    let myNotes = JSON.parse(fs.readFileSync("./db/db.json", "utf-8"));
+    let notelength = (myNotes.length).toString(); 
     addNote.id = notelength;
 
-    //push updated note to the data containing notes history in db.json
-    noteList.push(addNote);
+    // pushes data into db.json 
+    myNotes.push(addNote);
 
     //write the updated data to db.json
-    fs.writeFileSync("./db/db.json", JSON.stringify(noteList));
-    res.json(noteList);
+    fs.writeFileSync("./db/db.json", JSON.stringify(myNotes));
+    res.json(myNotes);
 })
 
-//delete note according to their id.
-app.delete("/api/notes/:id", (req, res) => {
-    let noteList = JSON.parse(fs.readFileSync("./db/db.json", "utf-8"));
-    let noteId = (req.params.id).toString();
+//delete the note according to their id
+app.delete("/api/notes/:id", function (req, res) {
+    const db = require("./db/db.json");
+    let jsonFilePath = path.join(__dirname, "./db/db.json");
+    // for loop to delete note by id 
+    for (let i = 0; i < db.length; i++) {
 
-    //filter all notes that does not have matching id and saved them as a new array
-    //the matching array will be deleted
-    noteList = noteList.filter(selected =>{
-        return selected.id != noteId;
-    })
+        if (db[i].id == req.params.id) {
+            // Splice takes i position, and then deletes the 1 note.
+            db.splice(i, 1);
+            break;
+        }
+    }
+    // Writes the db.json file
+    fs.writeFileSync(jsonFilePath, JSON.stringify(db), function (err) {
 
-    //write the updated data to db.json and display the updated note
-    fs.writeFileSync("./db/db.json", JSON.stringify(noteList));
-    res.json(noteList);
+        if (err) {
+            return console.log(err);
+        } else {
+            console.log("Your note was deleted!");
+        }
+    });
+    res.json(db);
 });
 
 
